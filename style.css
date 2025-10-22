@@ -781,5 +781,85 @@ footer i {
 }
 
 /* ... (sisa kode CSS lainnya) ... */
+/* ... (kode CSS sebelumnya) ... */
+
+/* Gaya untuk Filter Kategori Galeri */
+.gallery-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start; /* Sejajarkan ke kiri */
+}
+
+.gallery-filters label {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.gallery-filters select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    font-size: 0.95em;
+    background-color: var(--white);
+    cursor: pointer;
+}
+
+.gallery-filters select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    outline: none;
+}
+
+/* Tombol Hapus Foto di Galeri */
+.gallery-item .btn-remove-photo {
+    background-color: #dc3545; /* Merah */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    display: none; /* Default hidden, tampilkan jika admin/wali */
+}
+
+.gallery-item .btn-remove-photo:hover {
+    background-color: #c82333;
+}
+
+/* Tombol Edit Pengumuman */
+.card .btn-edit-announcement {
+    background-color: var(--accent-color); /* Biru */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    margin-top: 10px;
+    margin-left: 10px; /* Spasi dari konten */
+    transition: background-color 0.3s ease;
+    display: none; /* Default hidden, tampilkan jika admin/wali */
+}
+
+.card .btn-edit-announcement:hover {
+    background-color: #0056b3;
+}
+
+/* Flexbox untuk konten card pengumuman */
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Menata konten dan tombol */
+}
+
+.card .card-footer-buttons {
+    display: flex;
+    justify-content: flex-end; /* Tombol ke kanan */
+    margin-top: 10px;
+}
+
 
 
