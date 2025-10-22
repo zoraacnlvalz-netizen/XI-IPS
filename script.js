@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const authWrapper = document.getElementById('authWrapper');
     const websiteContent = document.getElementById('websiteContent');
     const loginFormCard = document.getElementById('loginForm');
+    const registerFormCard = document.getElementById('registerForm');
+    const showRegisterLink = document.getElementById('showRegister');
+    const showLoginLink = document.getElementById('showLogin');
+
     const logoutButton = document.getElementById('logoutButton');
     const loginFormActual = document.getElementById('loginFormActual');
     const loginButton = document.getElementById('loginButton');
@@ -54,16 +58,46 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeAnimationText = document.getElementById('welcomeAnimationText');
     const defaultWelcomeText = document.querySelector('.default-welcome-text');
 
+    const registerFormActual = document.getElementById('registerFormActual');
+
+    // Elemen untuk Modifikasi Jadwal (BARU)
+    const editScheduleBtn = document.getElementById('editScheduleBtn');
+    const editScheduleModal = document.getElementById('editScheduleModal');
+    const closeEditScheduleModalBtn = editScheduleModal.querySelector('.close-button');
+    const scheduleEditForm = document.getElementById('scheduleEditForm');
+    const selectDay = document.getElementById('selectDay');
+    const scheduleTextarea = document.getElementById('scheduleTextarea');
+    const currentScheduleGrid = document.getElementById('currentScheduleGrid');
+
 
     let isLoggedIn = false;
     let currentUserType = null;
 
+    // Data user yang valid
     const validUsers = {
-        student: { 'siswa1': 'kelasips' }, // Objek untuk menyimpan banyak akun siswa
+        student: { 'siswa1': 'kelasips' },
         teacher: { 'Manda': 'MANDA123' },
-        admin:   { 'Ghery': 'GHERY0987' }
+        admin:   { 'Ghery': 'GHERY0987' },
+        guest:   { 'pengunjung': 'password' } // Akun default untuk pengunjung
     };
 
+    // Data jadwal default (akan dimuat dari localStorage jika ada)
+    let classSchedule = {
+        'Senin':    ['07:30 - 09:00 | Ekonomi', '09:00 - 10:30 | Geografi', '10:30 - 11:00 | Istirahat', '11:00 - 12:30 | Sosiologi', '12:30 - 14:00 | Bahasa Inggris'],
+        'Selasa':   ['07:30 - 09:00 | Sejarah', '09:00 - 10:30 | Matematika', '10:30 - 11:00 | Istirahat', '11:00 - 12:30 | PKn', '12:30 - 14:00 | Seni Budaya'],
+        'Rabu':     ['07:30 - 09:00 | Bahasa Indonesia', '09:00 - 10:30 | Penjaskes', '10:30 - 11:00 | Istirahat', '11:00 - 12:30 | Fisika (Lintas Minat)', '12:30 - 14:00 | Bimbingan Konseling'],
+        'Kamis':    ['07:30 - 09:00 | Ekonomi', '09:00 - 10:30 | Geografi', '10:30 - 11:00 | Istirahat', '11:00 - 12:30 | Sosiologi', '12:30 - 14:00 | Bahasa Inggris'],
+        'Jumat':    ['07:30 - 09:00 | Pendidikan Agama', '09:00 - 10:30 | Sejarah', '10:30 - 11:00 | Istirahat', '11:00 - 12:30 | Prakarya & KWU', '12:30 - 13:00 | Kebersihan Lingkungan']
+    };
+
+    // Data galeri default (akan dimuat dari localStorage jika ada)
+    let galleryPhotos = [
+        { src: 'https://via.placeholder.com/300x200/FFC107/FFFFFF?text=Momen+Kelas+1', caption: 'Momen kebersamaan saat belajar.' },
+        { src: 'https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=Momen+Kelas+2', caption: 'Kegiatan bakti sosial.' },
+        { src: 'https://via.placeholder.com/300x200/2196F3/FFFFFF?text=Momen+Kelas+3', caption: 'Keseruan saat pentas seni.' }
+    ];
+
+    // --- Fungsi Bantuan ---
     function saveSettings() {
         const settings = {
             backgroundColor: document.body.style.backgroundColor,
@@ -96,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
     function logAccess(username, userType, status) {
         const timestamp = new Date().toLocaleString('id-ID');
         const logEntry = { timestamp, username, userType, status };
@@ -116,6 +149,74 @@ document.addEventListener('DOMContentLoaded', function() {
         ).join('');
     }
 
+    // Fungsi untuk memuat dan menampilkan jadwal (BARU)
+    function loadSchedule() {
+        const storedSchedule = localStorage.getItem('classSchedule');
+        if (storedSchedule) {
+            classSchedule = JSON.parse(storedSchedule);
+        }
+        renderSchedule();
+    }
+
+    // Fungsi untuk me-render jadwal ke DOM (BARU)
+    function renderSchedule() {
+        currentScheduleGrid.innerHTML = ''; // Kosongkan jadwal yang ada
+        for (const day in classSchedule) {
+            const scheduleDayDiv = document.createElement('div');
+            scheduleDayDiv.classList.add('schedule-day');
+            scheduleDayDiv.innerHTML = `
+                <h4>${day}</h4>
+                <ul>
+                    ${classSchedule[day].map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            `;
+            currentScheduleGrid.appendChild(scheduleDayDiv);
+        }
+    }
+
+    // Fungsi untuk memuat dan menampilkan galeri (BARU)
+    function loadGallery() {
+        const storedPhotos = localStorage.getItem('galleryPhotos');
+        if (storedPhotos) {
+            galleryPhotos = JSON.parse(storedPhotos);
+        }
+        renderGallery();
+    }
+
+    // Fungsi untuk me-render galeri ke DOM (BARU)
+    function renderGallery() {
+        galleryGrid.innerHTML = ''; // Kosongkan galeri yang ada
+        if (galleryPhotos.length === 0) {
+            galleryGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Belum ada foto di galeri. Klik "Upload Foto" untuk menambahkannya!</p>';
+            return;
+        }
+
+        galleryPhotos.forEach((photo, index) => {
+            const galleryItemDiv = document.createElement('div');
+            galleryItemDiv.classList.add('gallery-item');
+            galleryItemDiv.innerHTML = `
+                <img src="${photo.src}" alt="${photo.caption}">
+                <p>${photo.caption}</p>
+                <button class="btn-remove-photo" data-index="${index}"><i class="fas fa-times-circle"></i> Hapus</button>
+            `;
+            galleryGrid.appendChild(galleryItemDiv);
+        });
+
+        // Tambahkan event listener untuk tombol hapus
+        document.querySelectorAll('.btn-remove-photo').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
+                    galleryPhotos.splice(index, 1); // Hapus foto dari array
+                    localStorage.setItem('galleryPhotos', JSON.stringify(galleryPhotos)); // Simpan perubahan
+                    renderGallery(); // Render ulang galeri
+                    alert('Foto berhasil dihapus!');
+                }
+            });
+        });
+    }
+
+    // --- Manajemen Tampilan ---
     function showAuthScreen() {
         authWrapper.style.display = 'flex';
         websiteContent.style.display = 'none';
@@ -128,9 +229,13 @@ document.addEventListener('DOMContentLoaded', function() {
         createTeacherAccountBtn.style.display = 'none';
         customizeWebsiteBtn.style.display = 'none';
         viewAccessLogBtn.style.display = 'none';
+        editScheduleBtn.style.display = 'none'; // Sembunyikan tombol edit jadwal
 
         welcomeAnimationText.style.display = 'none';
         defaultWelcomeText.classList.remove('hidden');
+
+        loginFormCard.style.display = 'block';
+        registerFormCard.style.display = 'none';
 
         if (backgroundMusic) {
             backgroundMusic.pause();
@@ -149,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
         welcomeAnimationText.offsetHeight;
         welcomeAnimationText.style.animation = '';
 
+        // Tampilkan/sembunyikan tombol berdasarkan tipe user
         if (currentUserType === 'admin' || currentUserType === 'teacher') {
             createAnnouncementBtn.style.display = 'inline-flex';
             uploadPhotoBtn.style.display = 'inline-flex';
@@ -162,11 +268,13 @@ document.addEventListener('DOMContentLoaded', function() {
             createTeacherAccountBtn.style.display = 'inline-flex';
             customizeWebsiteBtn.style.display = 'inline-flex';
             viewAccessLogBtn.style.display = 'inline-flex';
+            editScheduleBtn.style.display = 'inline-flex'; // Tampilkan tombol edit jadwal
         } else {
             createStudentAccountBtn.style.display = 'none';
             createTeacherAccountBtn.style.display = 'none';
             customizeWebsiteBtn.style.display = 'none';
             viewAccessLogBtn.style.display = 'none';
+            editScheduleBtn.style.display = 'none'; // Sembunyikan tombol edit jadwal
         }
 
         if (backgroundMusic) {
@@ -177,10 +285,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
+        loadSchedule(); // Muat jadwal saat masuk website
+        loadGallery();  // Muat galeri saat masuk website
     }
 
+    // --- Init ---
     loadSettings();
     showAuthScreen();
+
+    // --- Event Listeners ---
+    showRegisterLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        loginFormCard.style.display = 'none';
+        registerFormCard.style.display = 'block';
+    });
+
+    showLoginLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        registerFormCard.style.display = 'none';
+        loginFormCard.style.display = 'block';
+    });
 
 
     loginFormActual.addEventListener('submit', function(e) {
@@ -205,10 +329,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 isAuthenticated = validUsers.teacher[username] === password;
             } else if (selectedUserType === 'admin') {
                 isAuthenticated = validUsers.admin[username] === password;
+            } else if (selectedUserType === 'guest') { // Login untuk Pengunjung (BARU)
+                isAuthenticated = (username === validUsers.guest.username && password === validUsers.guest.password);
             }
             
             if (isAuthenticated) {
-                alert(`Login Berhasil sebagai ${selectedUserType.replace('student', 'Anggota Kelas').replace('teacher', 'Wali Kelas').replace('admin', 'Peluncur Website')}! Selamat datang!`);
+                alert(`Login Berhasil sebagai ${selectedUserType.replace('student', 'Anggota Kelas').replace('teacher', 'Wali Kelas').replace('admin', 'Peluncur Website').replace('guest', 'Pengunjung')}! Selamat datang!`);
                 isLoggedIn = true;
                 currentUserType = selectedUserType;
                 showWebsiteContent();
@@ -221,6 +347,43 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('userTypeStudent').checked = true;
         }, 1500);
     });
+
+    registerFormActual.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const regUsername = document.getElementById('regUsername').value;
+        const regEmail = document.getElementById('regEmail').value;
+        const regPassword = document.getElementById('regPassword').value;
+        const regConfirmPassword = document.getElementById('regConfirmPassword').value;
+
+        if (!regUsername || !regPassword || !regConfirmPassword) {
+            alert('Semua field (Username, Password, Konfirmasi Password) harus diisi!');
+            return;
+        }
+
+        if (regPassword !== regConfirmPassword) {
+            alert('Konfirmasi password tidak cocok!');
+            return;
+        }
+        
+        if (validUsers.student[regUsername]) {
+            alert(`Username '${regUsername}' sudah digunakan. Silakan pilih username lain.`);
+            return;
+        }
+
+        validUsers.student[regUsername] = regPassword;
+        console.log(`Akun anggota kelas baru (via register umum) dibuat: ${regUsername}, ${regPassword}`);
+        logAccess(regUsername, 'student', 'Daftar & Login Otomatis');
+
+        alert(`Pendaftaran berhasil! Anda akan otomatis login sebagai ${regUsername}.`);
+        isLoggedIn = true;
+        currentUserType = 'student';
+        showWebsiteContent();
+        registerFormActual.reset();
+        loginFormActual.reset();
+
+        document.getElementById('userTypeStudent').checked = true;
+    });
+
 
     logoutButton.addEventListener('click', function(e) {
         e.preventDefault();
@@ -260,6 +423,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (event.target == accessLogModal) {
             accessLogModal.style.display = 'none';
+        }
+        if (event.target == editScheduleModal) { // Tambahkan ini untuk modal edit jadwal
+            editScheduleModal.style.display = 'none';
         }
     });
 
@@ -315,13 +481,10 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.onload = function(event) {
             const imageUrl = event.target.result;
 
-            const newGalleryItem = document.createElement('div');
-            newGalleryItem.classList.add('gallery-item');
-            newGalleryItem.innerHTML = `
-                <img src="${imageUrl}" alt="${photoCaption}">
-                <p>${photoCaption}</p>
-            `;
-            galleryGrid.prepend(newGalleryItem);
+            const newPhoto = { src: imageUrl, caption: photoCaption };
+            galleryPhotos.unshift(newPhoto); // Tambahkan ke awal array
+            localStorage.setItem('galleryPhotos', JSON.stringify(galleryPhotos)); // Simpan ke localStorage
+            renderGallery(); // Render ulang galeri
 
             alert('Foto berhasil diupload!');
             uploadPhotoModal.style.display = 'none';
@@ -361,8 +524,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         validUsers.student[newStudentUsername] = newStudentPassword;
-        console.log("Akun siswa baru dibuat:", newStudentUsername, newStudentPassword);
-        console.log("Daftar siswa terbaru:", validUsers.student);
+        console.log("Akun siswa baru (oleh admin) dibuat:", newStudentUsername, newStudentPassword);
+        logAccess(newStudentUsername, 'student', 'Akun dibuat oleh Admin');
 
         alert(`Akun anggota kelas '${newStudentUsername}' berhasil dibuat!`);
         createStudentAccountModal.style.display = 'none';
@@ -401,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         validUsers.teacher[newTeacherUsername] = newTeacherPassword;
         console.log("Akun wali kelas baru dibuat:", newTeacherUsername, newTeacherPassword);
-        console.log("Daftar wali kelas terbaru:", validUsers.teacher);
+        logAccess(newTeacherUsername, 'teacher', 'Akun dibuat oleh Admin');
 
         alert(`Akun wali kelas '${newTeacherUsername}' berhasil dibuat!`);
         createTeacherAccountModal.style.display = 'none';
@@ -417,11 +580,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const option = musicSourceSelect.querySelector(`option[value="${currentSrc}"]`);
             if (option) {
                 musicSourceSelect.value = currentSrc;
-            } else if (backgroundMusic.src && backgroundMusic.src !== 'none' && !backgroundMusic.src.startsWith('data:')) { // Cek bukan data:url
+            } else if (backgroundMusic.src && backgroundMusic.src !== 'none' && !backgroundMusic.src.startsWith('data:')) {
                 musicSourceSelect.value = 'none';
-            } else if (backgroundMusic.src && backgroundMusic.src.startsWith('data:')) { // Musik dari upload file
-                 // Biarkan sebagai 'none' atau tambahkan opsi "Uploaded Music"
-                 musicSourceSelect.value = 'none'; // Untuk saat ini, default ke 'none'
+            } else if (backgroundMusic.src && backgroundMusic.src.startsWith('data:')) {
+                 musicSourceSelect.value = 'none';
             } else {
                  musicSourceSelect.value = 'none';
             }
@@ -540,6 +702,36 @@ document.addEventListener('DOMContentLoaded', function() {
             displayAccessLogs();
             alert('Log akses telah dibersihkan.');
         }
+    });
+
+    // --- Logika untuk Edit Jadwal (BARU) ---
+    editScheduleBtn.addEventListener('click', function() {
+        // Muat jadwal untuk hari yang dipilih ke textarea
+        selectDay.value = Object.keys(classSchedule)[0]; // Default ke hari pertama
+        scheduleTextarea.value = classSchedule[selectDay.value].join('\n');
+        editScheduleModal.style.display = 'block';
+    });
+
+    closeEditScheduleModalBtn.addEventListener('click', function() {
+        editScheduleModal.style.display = 'none';
+    });
+
+    selectDay.addEventListener('change', function() {
+        scheduleTextarea.value = classSchedule[this.value].join('\n');
+    });
+
+    scheduleEditForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const dayToEdit = selectDay.value;
+        const newScheduleText = scheduleTextarea.value;
+        const newScheduleArray = newScheduleText.split('\n').map(item => item.trim()).filter(item => item !== '');
+
+        classSchedule[dayToEdit] = newScheduleArray; // Update jadwal di objek
+        localStorage.setItem('classSchedule', JSON.stringify(classSchedule)); // Simpan ke localStorage
+        renderSchedule(); // Render ulang jadwal di halaman utama
+
+        alert(`Jadwal hari ${dayToEdit} berhasil diperbarui!`);
+        editScheduleModal.style.display = 'none';
     });
 });
 
