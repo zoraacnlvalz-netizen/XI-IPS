@@ -12,16 +12,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingText = document.getElementById('loadingText');
     
     const createAnnouncementBtn = document.getElementById('createAnnouncementBtn');
+    const announcementsList = document.getElementById('announcementsList');
+    // Elemen untuk Pengumuman (BARU)
     const announcementModal = document.getElementById('announcementModal');
     const closeAnnouncementModalBtn = announcementModal.querySelector('.close-button');
     const newAnnouncementForm = document.getElementById('newAnnouncementForm');
-    const announcementsList = document.getElementById('announcementsList');
+    const editAnnouncementModal = document.getElementById('editAnnouncementModal'); // BARU
+    const closeEditAnnouncementModalBtn = editAnnouncementModal.querySelector('.close-button'); // BARU
+    const editAnnouncementForm = document.getElementById('editAnnouncementForm'); // BARU
+    const editAnnouncementIndex = document.getElementById('editAnnouncementIndex'); // BARU
+    const editAnnouncementTitle = document.getElementById('editAnnouncementTitle'); // BARU
+    const editAnnouncementContent = document.getElementById('editAnnouncementContent'); // BARU
+
 
     const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
     const uploadPhotoModal = document.getElementById('uploadPhotoModal');
     const closeUploadPhotoModalBtn = uploadPhotoModal.querySelector('.close-button');
     const newPhotoUploadForm = document.getElementById('newPhotoUploadForm');
     const galleryGrid = document.getElementById('galleryGrid');
+    // Elemen untuk Galeri (BARU)
+    const photoCategorySelect = document.getElementById('photoCategory');
+    const addGalleryCategoryBtn = document.getElementById('addGalleryCategoryBtn');
+    const addGalleryCategoryModal = document.getElementById('addGalleryCategoryModal');
+    const closeAddGalleryCategoryModalBtn = addGalleryCategoryModal.querySelector('.close-button');
+    const newGalleryCategoryForm = document.getElementById('newGalleryCategoryForm');
+    const newCategoryNameInput = document.getElementById('newCategoryName');
+    const galleryCategoryFilter = document.getElementById('galleryCategoryFilter');
+
 
     const backgroundMusic = document.getElementById('backgroundMusic');
 
@@ -60,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const registerFormActual = document.getElementById('registerFormActual');
 
-    // Elemen untuk Modifikasi Jadwal (BARU)
     const editScheduleBtn = document.getElementById('editScheduleBtn');
     const editScheduleModal = document.getElementById('editScheduleModal');
     const closeEditScheduleModalBtn = editScheduleModal.querySelector('.close-button');
@@ -73,12 +89,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let isLoggedIn = false;
     let currentUserType = null;
 
-    // Data user yang valid
     const validUsers = {
         student: { 'siswa1': 'kelasips' },
         teacher: { 'Manda': 'MANDA123' },
         admin:   { 'Ghery': 'GHERY0987' },
-        guest:   { 'pengunjung': 'password' } // Akun default untuk pengunjung
+        guest:   { 'pengunjung': 'password' }
     };
 
     // Data jadwal default (akan dimuat dari localStorage jika ada)
@@ -90,11 +105,25 @@ document.addEventListener('DOMContentLoaded', function() {
         'Jumat':    ['07:30 - 09:00 | Pendidikan Agama', '09:00 - 10:30 | Sejarah', '10:30 - 11:00 | Istirahat', '11:00 - 12:30 | Prakarya & KWU', '12:30 - 13:00 | Kebersihan Lingkungan']
     };
 
+    // Data pengumuman default (akan dimuat dari localStorage jika ada)
+    let announcements = [
+        { title: 'Rapat Studi Tour', content: 'Akan diadakan rapat persiapan studi tour pada hari Jumat, 25 Oktober 2025 di ruang kelas.', date: '21 Oktober 2025' },
+        { title: 'Jadwal Ujian Ganjil', content: 'Jadwal lengkap ujian semester ganjil dapat diunduh di bagian Dokumen Kelas.', date: '20 Oktober 2025' },
+        { title: 'Lomba Kebersihan Kelas', content: 'Mari sukseskan lomba kebersihan antar kelas! Penilaian dimulai minggu depan.', date: '18 Oktober 2025' }
+    ];
+
+    // Kategori galeri default (akan dimuat dari localStorage jika ada)
+    let galleryCategories = [
+        'Momen Kebersamaan Saat Belajar',
+        'Kegiatan Bakti Sosial',
+        'Keseruan Saat Pentas Seni'
+    ];
+
     // Data galeri default (akan dimuat dari localStorage jika ada)
     let galleryPhotos = [
-        { src: 'https://via.placeholder.com/300x200/FFC107/FFFFFF?text=Momen+Kelas+1', caption: 'Momen kebersamaan saat belajar.' },
-        { src: 'https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=Momen+Kelas+2', caption: 'Kegiatan bakti sosial.' },
-        { src: 'https://via.placeholder.com/300x200/2196F3/FFFFFF?text=Momen+Kelas+3', caption: 'Keseruan saat pentas seni.' }
+        { src: 'https://via.placeholder.com/300x200/FFC107/FFFFFF?text=Momen+Kelas+1', caption: 'Momen kebersamaan saat belajar.', category: 'Momen Kebersamaan Saat Belajar' },
+        { src: 'https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=Momen+Kelas+2', caption: 'Kegiatan bakti sosial.', category: 'Kegiatan Bakti Sosial' },
+        { src: 'https://via.placeholder.com/300x200/2196F3/FFFFFF?text=Momen+Kelas+3', caption: 'Keseruan saat pentas seni.', category: 'Keseruan Saat Pentas Seni' }
     ];
 
     // --- Fungsi Bantuan ---
@@ -149,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ).join('');
     }
 
-    // Fungsi untuk memuat dan menampilkan jadwal (BARU)
+    // --- Manajemen Jadwal ---
     function loadSchedule() {
         const storedSchedule = localStorage.getItem('classSchedule');
         if (storedSchedule) {
@@ -158,9 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
         renderSchedule();
     }
 
-    // Fungsi untuk me-render jadwal ke DOM (BARU)
     function renderSchedule() {
-        currentScheduleGrid.innerHTML = ''; // Kosongkan jadwal yang ada
+        currentScheduleGrid.innerHTML = '';
         for (const day in classSchedule) {
             const scheduleDayDiv = document.createElement('div');
             scheduleDayDiv.classList.add('schedule-day');
@@ -174,7 +202,93 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Fungsi untuk memuat dan menampilkan galeri (BARU)
+    // --- Manajemen Pengumuman ---
+    function loadAnnouncements() {
+        const storedAnnouncements = localStorage.getItem('announcements');
+        if (storedAnnouncements) {
+            announcements = JSON.parse(storedAnnouncements);
+        }
+        renderAnnouncements();
+    }
+
+    function renderAnnouncements() {
+        announcementsList.innerHTML = '';
+        if (announcements.length === 0) {
+            announcementsList.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Belum ada pengumuman.</p>';
+            return;
+        }
+
+        announcements.forEach((ann, index) => {
+            const announcementCard = document.createElement('div');
+            announcementCard.classList.add('card');
+            announcementCard.innerHTML = `
+                <h4>${ann.title}</h4>
+                <p>${ann.content}</p>
+                <span><i class="far fa-calendar-alt"></i> ${ann.date}</span>
+                <div class="card-footer-buttons">
+                    <button class="btn-edit-announcement" data-index="${index}" style="display: ${currentUserType === 'admin' || currentUserType === 'teacher' ? 'inline-block' : 'none'};"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn-remove-announcement" data-index="${index}" style="display: ${currentUserType === 'admin' || currentUserType === 'teacher' ? 'inline-block' : 'none'}; background-color: #dc3545; margin-left: 5px;"><i class="fas fa-trash"></i> Hapus</button>
+                </div>
+            `;
+            announcementsList.prepend(announcementCard); // Tambahkan ke paling atas
+        });
+
+        // Event listener untuk tombol edit pengumuman (BARU)
+        document.querySelectorAll('.btn-edit-announcement').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                const annToEdit = announcements[index];
+                editAnnouncementIndex.value = index;
+                editAnnouncementTitle.value = annToEdit.title;
+                editAnnouncementContent.value = annToEdit.content;
+                editAnnouncementModal.style.display = 'block';
+            });
+        });
+        // Event listener untuk tombol hapus pengumuman (BARU)
+        document.querySelectorAll('.btn-remove-announcement').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                if (confirm('Apakah Anda yakin ingin menghapus pengumuman ini?')) {
+                    announcements.splice(index, 1);
+                    localStorage.setItem('announcements', JSON.stringify(announcements));
+                    renderAnnouncements();
+                    alert('Pengumuman berhasil dihapus!');
+                }
+            });
+        });
+    }
+
+
+    // --- Manajemen Galeri ---
+    function loadGalleryCategories() {
+        const storedCategories = localStorage.getItem('galleryCategories');
+        if (storedCategories) {
+            galleryCategories = JSON.parse(storedCategories);
+        }
+        renderGalleryCategories();
+    }
+
+    function renderGalleryCategories() {
+        // Render ke select di modal upload foto
+        photoCategorySelect.innerHTML = '<option value="" disabled selected>Pilih Kategori</option>';
+        galleryCategories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            photoCategorySelect.appendChild(option);
+        });
+
+        // Render ke select filter
+        galleryCategoryFilter.innerHTML = '<option value="all">Semua Kategori</option>';
+        galleryCategories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            galleryCategoryFilter.appendChild(option);
+        });
+        galleryCategoryFilter.value = 'all'; // Reset filter
+    }
+
     function loadGallery() {
         const storedPhotos = localStorage.getItem('galleryPhotos');
         if (storedPhotos) {
@@ -183,40 +297,42 @@ document.addEventListener('DOMContentLoaded', function() {
         renderGallery();
     }
 
-    // Fungsi untuk me-render galeri ke DOM (BARU)
-    function renderGallery() {
-        galleryGrid.innerHTML = ''; // Kosongkan galeri yang ada
-        if (galleryPhotos.length === 0) {
-            galleryGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Belum ada foto di galeri. Klik "Upload Foto" untuk menambahkannya!</p>';
+    function renderGallery(filterCategory = 'all') {
+        galleryGrid.innerHTML = '';
+        const filteredPhotos = filterCategory === 'all'
+            ? galleryPhotos
+            : galleryPhotos.filter(photo => photo.category === filterCategory);
+
+        if (filteredPhotos.length === 0) {
+            galleryGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Belum ada foto di kategori ini.</p>';
             return;
         }
 
-        galleryPhotos.forEach((photo, index) => {
+        filteredPhotos.forEach((photo, index) => {
             const galleryItemDiv = document.createElement('div');
             galleryItemDiv.classList.add('gallery-item');
             galleryItemDiv.innerHTML = `
                 <img src="${photo.src}" alt="${photo.caption}">
-                <p>${photo.caption}</p>
-                <button class="btn-remove-photo" data-index="${index}"><i class="fas fa-times-circle"></i> Hapus</button>
+                <p>${photo.caption} <span style="font-size: 0.8em; color: #888;">(${photo.category})</span></p>
+                <button class="btn-remove-photo" data-index="${index}" style="display: ${currentUserType === 'admin' ? 'inline-block' : 'none'};"><i class="fas fa-trash"></i> Hapus</button>
             `;
             galleryGrid.appendChild(galleryItemDiv);
         });
 
-        // Tambahkan event listener untuk tombol hapus
         document.querySelectorAll('.btn-remove-photo').forEach(button => {
             button.addEventListener('click', function() {
                 const index = parseInt(this.dataset.index);
                 if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
-                    galleryPhotos.splice(index, 1); // Hapus foto dari array
-                    localStorage.setItem('galleryPhotos', JSON.stringify(galleryPhotos)); // Simpan perubahan
-                    renderGallery(); // Render ulang galeri
+                    galleryPhotos.splice(index, 1);
+                    localStorage.setItem('galleryPhotos', JSON.stringify(galleryPhotos));
+                    renderGallery(galleryCategoryFilter.value); // Render ulang dengan filter aktif
                     alert('Foto berhasil dihapus!');
                 }
             });
         });
     }
 
-    // --- Manajemen Tampilan ---
+    // --- Manajemen Tampilan Utama ---
     function showAuthScreen() {
         authWrapper.style.display = 'flex';
         websiteContent.style.display = 'none';
@@ -229,7 +345,8 @@ document.addEventListener('DOMContentLoaded', function() {
         createTeacherAccountBtn.style.display = 'none';
         customizeWebsiteBtn.style.display = 'none';
         viewAccessLogBtn.style.display = 'none';
-        editScheduleBtn.style.display = 'none'; // Sembunyikan tombol edit jadwal
+        editScheduleBtn.style.display = 'none';
+        addGalleryCategoryBtn.style.display = 'none'; // Sembunyikan tombol
 
         welcomeAnimationText.style.display = 'none';
         defaultWelcomeText.classList.remove('hidden');
@@ -255,26 +372,34 @@ document.addEventListener('DOMContentLoaded', function() {
         welcomeAnimationText.style.animation = '';
 
         // Tampilkan/sembunyikan tombol berdasarkan tipe user
+        // Tombol Buat Pengumuman: Admin, Wali Kelas
         if (currentUserType === 'admin' || currentUserType === 'teacher') {
             createAnnouncementBtn.style.display = 'inline-flex';
-            uploadPhotoBtn.style.display = 'inline-flex';
         } else {
             createAnnouncementBtn.style.display = 'none';
-            uploadPhotoBtn.style.display = 'none';
+        }
+        // Tombol Upload Foto: Admin, Wali Kelas
+        if (currentUserType === 'admin' || currentUserType === 'teacher') {
+             uploadPhotoBtn.style.display = 'inline-flex';
+        } else {
+             uploadPhotoBtn.style.display = 'none';
         }
 
+        // Tombol khusus Peluncur Website (Admin)
         if (currentUserType === 'admin') {
             createStudentAccountBtn.style.display = 'inline-flex';
             createTeacherAccountBtn.style.display = 'inline-flex';
             customizeWebsiteBtn.style.display = 'inline-flex';
             viewAccessLogBtn.style.display = 'inline-flex';
-            editScheduleBtn.style.display = 'inline-flex'; // Tampilkan tombol edit jadwal
+            editScheduleBtn.style.display = 'inline-flex';
+            addGalleryCategoryBtn.style.display = 'inline-flex'; // Tampilkan tombol
         } else {
             createStudentAccountBtn.style.display = 'none';
             createTeacherAccountBtn.style.display = 'none';
             customizeWebsiteBtn.style.display = 'none';
             viewAccessLogBtn.style.display = 'none';
-            editScheduleBtn.style.display = 'none'; // Sembunyikan tombol edit jadwal
+            editScheduleBtn.style.display = 'none';
+            addGalleryCategoryBtn.style.display = 'none'; // Sembunyikan tombol
         }
 
         if (backgroundMusic) {
@@ -285,8 +410,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
-        loadSchedule(); // Muat jadwal saat masuk website
-        loadGallery();  // Muat galeri saat masuk website
+        // Muat semua data yang bersifat permanen dari localStorage
+        loadSchedule();
+        loadAnnouncements();
+        loadGalleryCategories(); // Muat kategori galeri
+        loadGallery();           // Muat foto galeri
     }
 
     // --- Init ---
@@ -329,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 isAuthenticated = validUsers.teacher[username] === password;
             } else if (selectedUserType === 'admin') {
                 isAuthenticated = validUsers.admin[username] === password;
-            } else if (selectedUserType === 'guest') { // Login untuk Pengunjung (BARU)
+            } else if (selectedUserType === 'guest') {
                 isAuthenticated = (username === validUsers.guest.username && password === validUsers.guest.password);
             }
             
@@ -337,21 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert(`Login Berhasil sebagai ${selectedUserType.replace('student', 'Anggota Kelas').replace('teacher', 'Wali Kelas').replace('admin', 'Peluncur Website').replace('guest', 'Pengunjung')}! Selamat datang!`);
                 isLoggedIn = true;
                 currentUserType = selectedUserType;
-                showWebsiteContent();
-                logAccess(username, selectedUserType, 'Berhasil');
-            } else {
-                alert('Username atau password salah, atau tipe pengguna tidak sesuai.');
-                logAccess(username, selectedUserType, 'Gagal');
-            }
-            this.reset();
-            document.getElementById('userTypeStudent').checked = true;
-        }, 1500);
-    });
-
-    registerFormActual.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const regUsername = document.getElementById('regUsername').value;
-        const regEmail = document.getElementById('regEmail').value;
+                showgetElementById('regEmail').value;
         const regPassword = document.getElementById('regPassword').value;
         const regConfirmPassword = document.getElementById('regConfirmPassword').value;
 
@@ -392,41 +506,15 @@ document.addEventListener('DOMContentLoaded', function() {
         loginFormCard.style.display = 'block';
     });
 
+    // --- Pengumuman Event Listeners ---
     createAnnouncementBtn.addEventListener('click', function() {
+        newAnnouncementForm.reset(); // Pastikan form kosong
         announcementModal.style.display = 'block';
     });
 
     closeAnnouncementModalBtn.addEventListener('click', function() {
         announcementModal.style.display = 'none';
         newAnnouncementForm.reset();
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target == announcementModal) {
-            announcementModal.style.display = 'none';
-            newAnnouncementForm.reset();
-        }
-        if (event.target == uploadPhotoModal) {
-            uploadPhotoModal.style.display = 'none';
-            newPhotoUploadForm.reset();
-        }
-        if (event.target == createStudentAccountModal) {
-            createStudentAccountModal.style.display = 'none';
-            newStudentAccountForm.reset();
-        }
-        if (event.target == createTeacherAccountModal) {
-            createTeacherAccountModal.style.display = 'none';
-            newTeacherAccountForm.reset();
-        }
-        if (event.target == customizeWebsiteModal) {
-            customizeWebsiteModal.style.display = 'none';
-        }
-        if (event.target == accessLogModal) {
-            accessLogModal.style.display = 'none';
-        }
-        if (event.target == editScheduleModal) { // Tambahkan ini untuk modal edit jadwal
-            editScheduleModal.style.display = 'none';
-        }
     });
 
     newAnnouncementForm.addEventListener('submit', function(e) {
@@ -443,22 +531,47 @@ document.addEventListener('DOMContentLoaded', function() {
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
         const formattedDate = today.toLocaleDateString('id-ID', options);
 
-        const newAnnouncementCard = document.createElement('div');
-        newAnnouncementCard.classList.add('card');
-        newAnnouncementCard.innerHTML = `
-            <h4>${title}</h4>
-            <p>${content}</p>
-            <span><i class="far fa-calendar-alt"></i> ${formattedDate}</span>
-        `;
-
-        announcementsList.prepend(newAnnouncementCard);
+        announcements.unshift({ title, content, date: formattedDate }); // Tambahkan ke awal
+        localStorage.setItem('announcements', JSON.stringify(announcements));
+        renderAnnouncements();
 
         alert('Pengumuman berhasil ditambahkan!');
         announcementModal.style.display = 'none';
         newAnnouncementForm.reset();
     });
 
+    // Event Listeners untuk Edit Pengumuman (BARU)
+    closeEditAnnouncementModalBtn.addEventListener('click', function() {
+        editAnnouncementModal.style.display = 'none';
+    });
+
+    editAnnouncementForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const index = parseInt(editAnnouncementIndex.value);
+        const newTitle = editAnnouncementTitle.value;
+        const newContent = editAnnouncementContent.value;
+
+        if (!newTitle || !newContent) {
+            alert('Judul dan isi pengumuman tidak boleh kosong!');
+            return;
+        }
+
+        announcements[index].title = newTitle;
+        announcements[index].content = newContent;
+        // Tanggal tidak diubah saat edit, bisa ditambahkan 'diedit: tanggal_sekarang' jika mau
+
+        localStorage.setItem('announcements', JSON.stringify(announcements));
+        renderAnnouncements(); // Render ulang daftar pengumuman
+
+        alert('Pengumuman berhasil diubah!');
+        editAnnouncementModal.style.display = 'none';
+    });
+
+
+    // --- Galeri Event Listeners ---
     uploadPhotoBtn.addEventListener('click', function() {
+        photoCategorySelect.selectedIndex = 0; // Reset pilihan kategori
+        newPhotoUploadForm.reset(); // Reset form
         uploadPhotoModal.style.display = 'block';
     });
 
@@ -471,9 +584,10 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const photoFile = document.getElementById('photoFile').files[0];
         const photoCaption = document.getElementById('photoCaption').value;
+        const photoCategory = document.getElementById('photoCategory').value;
 
-        if (!photoFile || !photoCaption) {
-            alert('Silakan pilih file foto dan isi keterangan foto!');
+        if (!photoFile || !photoCaption || !photoCategory) {
+            alert('Silakan pilih kategori, file foto, dan isi keterangan foto!');
             return;
         }
 
@@ -481,10 +595,10 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.onload = function(event) {
             const imageUrl = event.target.result;
 
-            const newPhoto = { src: imageUrl, caption: photoCaption };
+            const newPhoto = { src: imageUrl, caption: photoCaption, category: photoCategory };
             galleryPhotos.unshift(newPhoto); // Tambahkan ke awal array
             localStorage.setItem('galleryPhotos', JSON.stringify(galleryPhotos)); // Simpan ke localStorage
-            renderGallery(); // Render ulang galeri
+            renderGallery(galleryCategoryFilter.value); // Render ulang galeri dengan filter aktif
 
             alert('Foto berhasil diupload!');
             uploadPhotoModal.style.display = 'none';
@@ -493,6 +607,81 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.readAsDataURL(photoFile);
     });
 
+    // Event Listeners Tambah Kategori Galeri (BARU)
+    addGalleryCategoryBtn.addEventListener('click', function() {
+        newGalleryCategoryForm.reset();
+        addGalleryCategoryModal.style.display = 'block';
+    });
+
+    closeAddGalleryCategoryModalBtn.addEventListener('click', function() {
+        addGalleryCategoryModal.style.display = 'none';
+    });
+
+    newGalleryCategoryForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newCategoryName = newCategoryNameInput.value.trim();
+
+        if (!newCategoryName) {
+            alert('Nama kategori tidak boleh kosong!');
+            return;
+        }
+        if (galleryCategories.includes(newCategoryName)) {
+            alert(`Kategori '${newCategoryName}' sudah ada!`);
+            return;
+        }
+
+        galleryCategories.push(newCategoryName);
+        localStorage.setItem('galleryCategories', JSON.stringify(galleryCategories));
+        renderGalleryCategories(); // Update dropdowns
+
+        alert(`Kategori '${newCategoryName}' berhasil ditambahkan!`);
+        addGalleryCategoryModal.style.display = 'none';
+        newGalleryCategoryForm.reset();
+    });
+
+    // Event Listener Filter Galeri (BARU)
+    galleryCategoryFilter.addEventListener('change', function() {
+        renderGallery(this.value);
+    });
+
+
+    // --- Modal Closing Umum ---
+    window.addEventListener('click', function(event) {
+        if (event.target == announcementModal) {
+            announcementModal.style.display = 'none';
+            newAnnouncementForm.reset();
+        }
+        if (event.target == editAnnouncementModal) { // BARU
+            editAnnouncementModal.style.display = 'none';
+        }
+        if (event.target == uploadPhotoModal) {
+            uploadPhotoModal.style.display = 'none';
+            newPhotoUploadForm.reset();
+        }
+        if (event.target == addGalleryCategoryModal) { // BARU
+            addGalleryCategoryModal.style.display = 'none';
+            newGalleryCategoryForm.reset();
+        }
+        if (event.target == createStudentAccountModal) {
+            createStudentAccountModal.style.display = 'none';
+            newStudentAccountForm.reset();
+        }
+        if (event.target == createTeacherAccountModal) {
+            createTeacherAccountModal.style.display = 'none';
+            newTeacherAccountForm.reset();
+        }
+        if (event.target == customizeWebsiteModal) {
+            customizeWebsiteModal.style.display = 'none';
+        }
+        if (event.target == accessLogModal) {
+            accessLogModal.style.display = 'none';
+        }
+        if (event.target == editScheduleModal) {
+            editScheduleModal.style.display = 'none';
+        }
+    });
+
+    // --- Admin/Teacher Account Management ---
     createStudentAccountBtn.addEventListener('click', function() {
         createStudentAccountModal.style.display = 'block';
     });
@@ -571,7 +760,7 @@ document.addEventListener('DOMContentLoaded', function() {
         newTeacherAccountForm.reset();
     });
 
-
+    // --- Website Customization ---
     customizeWebsiteBtn.addEventListener('click', function() {
         backgroundColorInput.value = rgbToHex(document.body.style.backgroundColor) || '#f9f9f9';
         
@@ -686,7 +875,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return "#" + hex(rgbMatch[1]) + hex(rgbMatch[2]) + hex(rgbMatch[3]);
     }
 
-
+    // --- Access Log ---
     viewAccessLogBtn.addEventListener('click', function() {
         displayAccessLogs();
         accessLogModal.style.display = 'block';
@@ -704,10 +893,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- Logika untuk Edit Jadwal (BARU) ---
+    // --- Edit Schedule ---
     editScheduleBtn.addEventListener('click', function() {
-        // Muat jadwal untuk hari yang dipilih ke textarea
-        selectDay.value = Object.keys(classSchedule)[0]; // Default ke hari pertama
+        selectDay.value = Object.keys(classSchedule)[0];
         scheduleTextarea.value = classSchedule[selectDay.value].join('\n');
         editScheduleModal.style.display = 'block';
     });
@@ -726,9 +914,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const newScheduleText = scheduleTextarea.value;
         const newScheduleArray = newScheduleText.split('\n').map(item => item.trim()).filter(item => item !== '');
 
-        classSchedule[dayToEdit] = newScheduleArray; // Update jadwal di objek
-        localStorage.setItem('classSchedule', JSON.stringify(classSchedule)); // Simpan ke localStorage
-        renderSchedule(); // Render ulang jadwal di halaman utama
+        classSchedule[dayToEdit] = newScheduleArray;
+        localStorage.setItem('classSchedule', JSON.stringify(classSchedule));
+        renderSchedule();
 
         alert(`Jadwal hari ${dayToEdit} berhasil diperbarui!`);
         editScheduleModal.style.display = 'none';
