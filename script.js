@@ -465,7 +465,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert(`Login Berhasil sebagai ${selectedUserType.replace('student', 'Anggota Kelas').replace('teacher', 'Wali Kelas').replace('admin', 'Peluncur Website').replace('guest', 'Pengunjung')}! Selamat datang!`);
                 isLoggedIn = true;
                 currentUserType = selectedUserType;
-                showgetElementById('regEmail').value;
+                showWebsiteContent();
+                logAccess(username, selectedUserType, 'Berhasil');
+            } else {
+                alert('Username atau password salah, atau tipe pengguna tidak sesuai.');
+                logAccess(username, selectedUserType, 'Gagal');
+            }
+            this.reset();
+            document.getElementById('userTypeStudent').checked = true;
+        }, 1500);
+    });
+
+    registerFormActual.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const regUsername = document.getElementById('regUsername').value;
+        const regEmail = document.getElementById('regEmail').value;
         const regPassword = document.getElementById('regPassword').value;
         const regConfirmPassword = document.getElementById('regConfirmPassword').value;
 
