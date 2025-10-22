@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SELAMAT DATANG DI XI IPS SMANDALAS KERINCI</title>
+    <title>Selamat Datang di XI IPS SMANDALAS KERINCI</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -11,7 +11,7 @@
     <div class="auth-wrapper" id="authWrapper">
         <div class="auth-container">
             <div id="loginForm" class="auth-form-card">
-                <h2>Login Website Kelas XI Ips</h2>
+                <h2>Login Website Kelas</h2>
                 <form id="loginFormActual">
                     <div class="input-group">
                         <label for="username"><i class="fas fa-user"></i> Username</label>
@@ -31,11 +31,39 @@
                             <label for="userTypeTeacher">Wali Kelas</label>
                             <input type="radio" id="userTypeAdmin" name="userType" value="admin">
                             <label for="userTypeAdmin">Peluncur Website</label>
+                             <!-- Tipe user baru: Pengunjung/Non-anggota -->
+                            <input type="radio" id="userTypeGuest" name="userType" value="guest">
+                            <label for="userTypeGuest">Pengunjung</label>
                         </div>
                     </div>
                     
                     <p id="loadingText" class="loading-text" style="display: none;">Sedang Memuat Akun Anda...</p>
                     <button type="submit" class="btn-primary" id="loginButton">Login</button>
+                    <p class="form-footer">Belum punya akun? <a href="#" id="showRegister">Daftar di sini</a></p>
+                </form>
+            </div>
+
+            <div id="registerForm" class="auth-form-card" style="display: none;">
+                <h2>Daftar Anggota Baru</h2>
+                <form id="registerFormActual">
+                    <div class="input-group">
+                        <label for="regUsername"><i class="fas fa-user-plus"></i> Username</label>
+                        <input type="text" id="regUsername" name="regUsername" placeholder="Pilih username" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="regEmail"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="regEmail" name="regEmail" placeholder="Masukkan email Anda" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="regPassword"><i class="fas fa-key"></i> Password</label>
+                        <input type="password" id="regPassword" name="regPassword" placeholder="Buat password" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="regConfirmPassword"><i class="fas fa-check-circle"></i> Konfirmasi Password</label>
+                        <input type="password" id="regConfirmPassword" name="regConfirmPassword" placeholder="Ulangi password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Daftar</button>
+                    <p class="form-footer">Sudah punya akun? <a href="#" id="showLogin">Login di sini</a></p>
                 </form>
             </div>
         </div>
@@ -59,8 +87,8 @@
 
         <main class="container">
             <section id="hero">
-                <h2 id="welcomeAnimationText" class="welcome-animation-text" style="display: none;">WELCOME TO WEBSITE CLASS XI IPS SMANDALAS KERINCI</h2>
-                <h2 class="default-welcome-text">SELAMAT DATANG DI WEBSITE KELAS XI IPS SMANDALAS KERINCI!</h2>
+                <h2 id="welcomeAnimationText" class="welcome-animation-text" style="display: none;">Welcome To Website XI IPS SMANDALAS KERINCI</h2>
+                <h2 class="default-welcome-text">Selamat Datang di Website Kelas XI IPS SMANDALAS KERINCI!</h2>
                 <p>Temukan informasi terbaru, kegiatan kelas, dan momen kebersamaan kami di sini.</p>
                 <button class="btn-secondary">Lihat Selengkapnya</button>
             </section>
@@ -72,96 +100,31 @@
                 </button>
                 <div class="card-list" id="announcementsList">
                     <div class="card">
-                        <h4>Aktivitas Hari Selasa</h4>
-                        <p>Pemilihan Ketua Dan Wakil Ketua Osis SMANDALAS KERINCI.</p>
-                        <span><i class="far fa-calendar-alt"></i> 22 Oktober 2025</span>
+                        <h4>Rapat Studi Tour</h4>
+                        <p>Akan diadakan rapat persiapan studi tour pada hari Jumat, 25 Oktober 2025 di ruang kelas.</p>
+                        <span><i class="far fa-calendar-alt"></i> 21 Oktober 2025</span>
                     </div>
                     <div class="card">
-                        <h4>Info Website</h4>
-                        <p>Website Ini Hanya Version Beta</p>
-                        <span><i class="far fa-calendar-alt"></i> 22 Oktober 2025</span>
+                        <h4>Jadwal Ujian Ganjil</h4>
+                        <p>Jadwal lengkap ujian semester ganjil dapat diunduh di bagian Dokumen Kelas.</p>
+                        <span><i class="far fa-calendar-alt"></i> 20 Oktober 2025</span>
                     </div>
                     <div class="card">
-                        <h4>Kata Kata</h4>
-                        <p>Yang Lain Boleh Panas,XI IPS Mah Gaya Bebas😜</p>
-                        <span><i class="far fa-calendar-alt"></i> 22 Oktober 2025</span>
+                        <h4>Lomba Kebersihan Kelas</h4>
+                        <p>Mari sukseskan lomba kebersihan antar kelas! Penilaian dimulai minggu depan.</p>
+                        <span><i class="far fa-calendar-alt"></i> 18 Oktober 2025</span>
                     </div>
                 </div>
             </section>
 
             <section id="scheduleSection">
                 <h3><i class="fas fa-calendar-alt"></i> Jadwal Mata Pelajaran</h3>
-                <div class="schedule-grid">
-                    <div class="schedule-day">
-                        <h4>Senin</h4>
-                        <ul>
-                            <li>07:15 - 07:55 | Upacara</li>
-                            <li>07:55 - 08:35 | Olahraga</li>
-                            <li>08:35 - 09:55 | Olahraga</li>
-                            <li>09:55 - 10:15 | ISTIRAHAT</li>
-                            <li>10:55 - 11:35 | Matematika</li>
-                            <li>11:35 - 12:15 | Seni-budaya</li>
-                            <li>12:15 - 13:15 | ISTIRAHAT</li>
-                            <li>13:15 - 14:35 | Bahasa Inggris [Lanjut] </li>
-                            <li>14:35 - 15:15 | Bahasa Inggris [Lanjut]</li>
-                            <li>15:15 - 15:55 | Sejarah</li>
-                        </ul>
-                    </div>
-                    <div class="schedule-day">
-                        <h4>Selasa</h4>
-                        <ul>
-                            <li>07:15 - 07:55 | Geografi</li>
-                            <li>07:55 - 08:35 | Geografi</li>
-                            <li>08:35 - 09:55 | Pkn</li>
-                            <li>09:55 - 10:15 | ISTIRAHAT</li>
-                            <li>10:55 - 11:35 | Pkn</li>
-                            <li>11:35 - 12:15 | Bahasa Indonesia</li>
-                            <li>12:15 - 13:15 | ISTIRAHAT</li>
-                            <li>13:15 - 14:35 | Seni Budaya</li>
-                            <li>14:35 - 15:15 | Ekonomi</li>
-                            <li>15:15 - 15:55 | Ekonomi</li>
-                        </ul>
-                    </div>
-                    <div class="schedule-day">
-                        <h4>Rabu</h4>
-                        <ul>
-                            <li>07:15 - 07:55 | Bahasa Inggris [Lanjut]</li>
-                            <li>07:55 - 08:35 | Bahasa Inggris [Lanjut]</li>
-                            <li>08:35 - 09:55 | Ekonomi</li>
-                            <li>09:55 - 10:15 | ISTIRAHAT</li>
-                            <li>10:55 - 11:35 | Ekonomi</li>
-                            <li>11:35 - 12:15 | Bahasa Inggris</li>
-                            <li>12:15 - 13:15 | ISTIRAHAT</li>
-                            <li>13:15 - 14:35 | Bahasa Inggris</li>
-                            <li>14:35 - 15:15 | Bahasa Inggris</li>
-                            <li>15:15 - 15:55 | Agama</li>
-                        </ul>
-                    </div>
-                    <div class="schedule-day">
-                        <h4>Kamis</h4>
-                        <ul>
-                            <li>07:15 - 07:55 | Senam</li>
-                            <li>07:55 - 08:35 | Sosialogi</li>
-                            <li>08:35 - 09:55 | Bajasa Indonesia</li>
-                            <li>09:55 - 10:15 | ISTIRAHAT</li>
-                            <li>10:55 - 11:35 | Bajasa Indonesia</li>
-                            <li>11:35 - 12:15 | Matematika</li>
-                            <li>12:15 - 13:15 | ISTIRAHAT</li>
-                            <li>13:15 - 14:35 | Prakarya</li>
-                            <li>14:35 - 15:15 | ESKUL </li>
-                            <li>15:15 - 15:55 | ESKUL</li>
-                        </ul>
-                    </div>
-                    <div class="schedule-day">
-                        <h4>Jumat</h4>
-                        <ul>
-                            <li>07:15 - 07:55 | Rohis</li>
-                            <li>07:55 - 08:35 | Sosialogi</li>
-                            <li>08:35 - 09:55 | Sosialogi</li>
-                            <li>09:55 - 10:15 | ISTIRAHAT</li>
-                            <li>10:55 - 11:35 | Geografi</li>
-                        </ul>
-                    </div>
+                <!-- Tombol Edit Jadwal, hanya untuk Peluncur Website -->
+                <button id="editScheduleBtn" class="btn-primary" style="display: none; margin-bottom: 20px;">
+                    <i class="fas fa-edit"></i> Edit Jadwal
+                </button>
+                <div class="schedule-grid" id="currentScheduleGrid">
+                    <!-- Jadwal akan dimuat di sini oleh JavaScript -->
                 </div>
             </section>
 
@@ -171,37 +134,31 @@
                     <i class="fas fa-upload"></i> Upload Foto
                 </button>
                 <div class="gallery-grid" id="galleryGrid">
-                    <div class="gallery-item">
+                    <!-- Foto-foto galeri akan dimuat di sini oleh JavaScript -->
+                    <!-- Placeholder untuk memastikan ada sesuatu jika localstorage kosong -->
+                    <div class="gallery-item placeholder-item">
                         <img src="https://via.placeholder.com/300x200/FFC107/FFFFFF?text=Momen+Kelas+1" alt="Momen Kelas 1">
-                        <p>Momen kebersamaan XI IPS.</p>
+                        <p>Momen kebersamaan saat belajar.</p>
                     </div>
-                    <div class="gallery-item">
+                    <div class="gallery-item placeholder-item">
                         <img src="https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=Momen+Kelas+2" alt="Momen Kelas 2">
-                        <p>Kegiatan XI IPS.</p>
-                    </div>
-                    <div class="gallery-item">
-                        <img src="https://via.placeholder.com/300x200/2196F3/FFFFFF?text=Momen+Kelas+3" alt="Momen Kelas 3">
-                        <p>Keseruan XI IPS.</p>
+                        <p>Kegiatan bakti sosial.</p>
                     </div>
                 </div>
             </section>
 
             <section id="about">
                 <h3><i class="fas fa-info-circle"></i> Tentang Kami</h3>
-                <p>KELAS XI IPS SMANDALAS KERINCI ADALAH KELAS YANG PENUH SEMANGAT, KREATIF, DAN KOLABORATIF. KAMI BERDEDIKASI UNTUK BELAJAR DAN TUMBUH BERSAMA. DENGAN BERBAGAI KEGIATAN AKADEMIK DAN NON-AKADEMIK, KAMI MENCIPTAKAN LINGKUNGAN BELAJAR YANG INSPIRATIF DAN MENYENANGKAN.</p>
-                <!-- Tombol untuk admin: Buat Akun Anggota Kelas -->
+                <p>Kelas XI IPS SMANDALAS KERINCI adalah kelas yang penuh semangat, kreatif, dan kolaboratif. Kami berdedikasi untuk belajar dan tumbuh bersama. Dengan berbagai kegiatan akademik dan non-akademik, kami menciptakan lingkungan belajar yang inspiratif dan menyenangkan.</p>
                 <button id="createStudentAccountBtn" class="btn-primary" style="display: none; margin-top: 20px;">
                     <i class="fas fa-user-plus"></i> Buat Akun Anggota Kelas
                 </button>
-                <!-- Tombol untuk admin: Buat Akun Wali Kelas (BARU) -->
                 <button id="createTeacherAccountBtn" class="btn-primary" style="display: none; margin-top: 20px; margin-left: 10px;">
                     <i class="fas fa-user-tie"></i> Buat Akun Wali Kelas
                 </button>
-                <!-- Tombol untuk admin: Ubah Tampilan Website (BARU) -->
                 <button id="customizeWebsiteBtn" class="btn-primary" style="display: none; margin-top: 20px; margin-left: 10px;">
                     <i class="fas fa-paint-brush"></i> Ubah Tampilan Website
                 </button>
-                <!-- Tombol untuk admin: Lihat Log Akses -->
                 <button id="viewAccessLogBtn" class="btn-primary" style="display: none; margin-top: 20px; margin-left: 10px;">
                     <i class="fas fa-clipboard-list"></i> Lihat Log Akses
                 </button>
@@ -210,12 +167,12 @@
 
         <footer>
             <div class="container">
-                <p>&copy; 2025 MY CLASS XI IPS SMANDALAS KERINCI. DIBUAT OLEH ZORAA UNTUK KITA SEMUA.</p>
+                <p>&copy; 2025 XI IPS SMANDALAS KERINCI. Dibuat dengan <i class="fas fa-heart"></i> untuk kita semua.</p>
                 <div class="social-icons">
-                    <a href="https://wa.me/6281273795069" target="_blank" aria-label="WhatsApp">
+                    <a href="https://wa.me/6281234567890" target="_blank" aria-label="WhatsApp Kelas">
                         <i class="fab fa-whatsapp"></i>
                     </a>
-                    <a href="https://instagram.com/@classxiips_smandalas" target="_blank" aria-label="Instagram Kelas">
+                    <a href="https://instagram.com/smandalas_kerinci" target="_blank" aria-label="Instagram Kelas">
                         <i class="fab fa-instagram"></i>
                     </a>
                 </div>
@@ -223,7 +180,10 @@
         </footer>
     </div>
 
-    <!-- Modals -->
+    <!-- Modals (Pengumuman, Upload Foto, Buat Akun Siswa/Wali, Log Akses, Ubah Tampilan) -->
+    <!-- (Ini adalah modal-modal yang sudah ada, saya tidak menyertakan kode lengkapnya di sini untuk menjaga keringkasan. Pastikan Anda menyalinnya dari kode sebelumnya) -->
+
+    <!-- Modal untuk Membuat Pengumuman Baru -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -263,7 +223,7 @@
     <div class="modal" id="createStudentAccountModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2><i class="fas fa-user-plus"></i> Buat Akun Anggota Kelas</h2>
+            <h2><i class="fas fa-user-plus"></i> Buat Akun Anggota Kelas (Oleh Admin)</h2>
             <form id="newStudentAccountForm">
                 <div class="input-group">
                     <label for="newStudentUsername">Username Anggota</label>
@@ -282,7 +242,6 @@
         </div>
     </div>
 
-    <!-- Modal untuk Buat Akun Wali Kelas (BARU) -->
     <div class="modal" id="createTeacherAccountModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -305,7 +264,6 @@
         </div>
     </div>
 
-    <!-- Modal untuk Mengubah Tampilan Website (BARU) -->
     <div class="modal" id="customizeWebsiteModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -330,7 +288,6 @@
                     <select id="musicSourceSelect">
                         <option value="none">Tidak Ada Musik</option>
                         <option value="your-music-file.mp3">Lagu Default</option>
-                        <!-- Opsi musik lain bisa ditambahkan di sini, misal: <option value="another-song.mp3">Lagu Lain</option> -->
                     </select>
                 </div>
                 <div class="input-group">
@@ -354,9 +311,33 @@
         </div>
     </div>
 
-    <audio id="backgroundMusic" src="http://c.top4top.io/m_3466fju4o0.mp3" loop controls muted></audio>
+    <!-- Modal untuk Mengedit Jadwal (BARU) -->
+    <div class="modal" id="editScheduleModal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2><i class="fas fa-edit"></i> Edit Jadwal Mata Pelajaran</h2>
+            <form id="scheduleEditForm">
+                <div class="input-group">
+                    <label for="selectDay">Pilih Hari:</label>
+                    <select id="selectDay">
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="scheduleTextarea">Jadwal (Format: HH:MM - HH:MM | Mata Pelajaran, setiap baris baru):</label>
+                    <textarea id="scheduleTextarea" rows="10"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Simpan Jadwal</button>
+            </form>
+        </div>
+    </div>
+
+    <audio id="backgroundMusic" src="your-music-file.mp3" loop controls muted></audio>
     <script src="script.js"></script>
 </body>
 </html>
 
-  
