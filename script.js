@@ -26,13 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeCreateStudentAccountModalBtn = createStudentAccountModal.querySelector('.close-button');
     const newStudentAccountForm = document.getElementById('newStudentAccountForm');
 
-    // Elemen untuk pembuatan akun Wali Kelas (BARU)
     const createTeacherAccountBtn = document.getElementById('createTeacherAccountBtn');
     const createTeacherAccountModal = document.getElementById('createTeacherAccountModal');
     const closeCreateTeacherAccountModalBtn = createTeacherAccountModal.querySelector('.close-button');
     const newTeacherAccountForm = document.getElementById('newTeacherAccountForm');
 
-    // Elemen untuk pengaturan tampilan website (BARU)
     const customizeWebsiteBtn = document.getElementById('customizeWebsiteBtn');
     const customizeWebsiteModal = document.getElementById('customizeWebsiteModal');
     const closeCustomizeWebsiteModalBtn = customizeWebsiteModal.querySelector('.close-button');
@@ -66,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
         admin:   { 'Ghery': 'GHERY0987' }
     };
 
-    // Fungsi untuk menyimpan pengaturan ke localStorage (BARU)
     function saveSettings() {
         const settings = {
             backgroundColor: document.body.style.backgroundColor,
@@ -76,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('websiteSettings', JSON.stringify(settings));
     }
 
-    // Fungsi untuk memuat pengaturan dari localStorage (BARU)
     function loadSettings() {
         const settings = JSON.parse(localStorage.getItem('websiteSettings'));
         if (settings) {
@@ -89,11 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.style.backgroundAttachment = 'fixed';
             }
             if (backgroundMusic && settings.musicSrc && settings.musicSrc !== 'none') {
-                 // Check if the current src is different to avoid unnecessary reload
                 if (backgroundMusic.src !== settings.musicSrc) {
                     backgroundMusic.src = settings.musicSrc;
-                    backgroundMusic.load(); // Load the new source
-                    // Attempt to play if already logged in, but will be handled by showWebsiteContent
+                    backgroundMusic.load();
                 }
             } else if (backgroundMusic && settings.musicSrc === 'none') {
                 backgroundMusic.pause();
@@ -131,8 +125,8 @@ document.addEventListener('DOMContentLoaded', function() {
         createAnnouncementBtn.style.display = 'none';
         uploadPhotoBtn.style.display = 'none';
         createStudentAccountBtn.style.display = 'none';
-        createTeacherAccountBtn.style.display = 'none'; // Sembunyikan tombol
-        customizeWebsiteBtn.style.display = 'none'; // Sembunyikan tombol
+        createTeacherAccountBtn.style.display = 'none';
+        customizeWebsiteBtn.style.display = 'none';
         viewAccessLogBtn.style.display = 'none';
 
         welcomeAnimationText.style.display = 'none';
@@ -152,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         defaultWelcomeText.classList.add('hidden');
         welcomeAnimationText.style.display = 'block';
         welcomeAnimationText.style.animation = 'none';
-        welcomeAnimationText.offsetHeight; /* trigger reflow */
+        welcomeAnimationText.offsetHeight;
         welcomeAnimationText.style.animation = '';
 
         if (currentUserType === 'admin' || currentUserType === 'teacher') {
@@ -163,16 +157,15 @@ document.addEventListener('DOMContentLoaded', function() {
             uploadPhotoBtn.style.display = 'none';
         }
 
-        // Tampilkan tombol admin
         if (currentUserType === 'admin') {
             createStudentAccountBtn.style.display = 'inline-flex';
-            createTeacherAccountBtn.style.display = 'inline-flex'; // Tampilkan tombol
-            customizeWebsiteBtn.style.display = 'inline-flex'; // Tampilkan tombol
+            createTeacherAccountBtn.style.display = 'inline-flex';
+            customizeWebsiteBtn.style.display = 'inline-flex';
             viewAccessLogBtn.style.display = 'inline-flex';
         } else {
             createStudentAccountBtn.style.display = 'none';
-            createTeacherAccountBtn.style.display = 'none'; // Sembunyikan tombol
-            customizeWebsiteBtn.style.display = 'none'; // Sembunyikan tombol
+            createTeacherAccountBtn.style.display = 'none';
+            customizeWebsiteBtn.style.display = 'none';
             viewAccessLogBtn.style.display = 'none';
         }
 
@@ -186,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Panggil loadSettings saat DOMContentLoaded (sebelum showAuthScreen)
     loadSettings();
     showAuthScreen();
 
@@ -259,11 +251,11 @@ document.addEventListener('DOMContentLoaded', function() {
             createStudentAccountModal.style.display = 'none';
             newStudentAccountForm.reset();
         }
-        if (event.target == createTeacherAccountModal) { // Tambahkan ini
+        if (event.target == createTeacherAccountModal) {
             createTeacherAccountModal.style.display = 'none';
             newTeacherAccountForm.reset();
         }
-        if (event.target == customizeWebsiteModal) { // Tambahkan ini
+        if (event.target == customizeWebsiteModal) {
             customizeWebsiteModal.style.display = 'none';
         }
         if (event.target == accessLogModal) {
@@ -377,7 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
         newStudentAccountForm.reset();
     });
 
-    // --- Logika untuk Fitur Buat Akun Wali Kelas (BARU) ---
     createTeacherAccountBtn.addEventListener('click', function() {
         createTeacherAccountModal.style.display = 'block';
     });
@@ -418,20 +409,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    // --- Logika untuk Fitur Pengaturan Tampilan Website (BARU) ---
     customizeWebsiteBtn.addEventListener('click', function() {
-        // Update color picker dengan warna body saat ini
         backgroundColorInput.value = rgbToHex(document.body.style.backgroundColor) || '#f9f9f9';
-        // Set nilai select musik saat ini
+        
         if (backgroundMusic && backgroundMusic.src) {
-            const currentSrc = backgroundMusic.src.split('/').pop(); // Ambil nama file saja
+            const currentSrc = backgroundMusic.src.split('/').pop();
             const option = musicSourceSelect.querySelector(`option[value="${currentSrc}"]`);
             if (option) {
                 musicSourceSelect.value = currentSrc;
-            } else if (backgroundMusic.src && backgroundMusic.src !== 'none') {
-                // Jika src tidak ada di daftar opsi, mungkin dari upload, tampilkan sebagai "Lagu Upload"
-                // Atau biarkan "Lagu Default" terpilih jika ada, atau "Tidak Ada Musik"
-                musicSourceSelect.value = 'none'; // Default ke none jika tidak dikenali
+            } else if (backgroundMusic.src && backgroundMusic.src !== 'none' && !backgroundMusic.src.startsWith('data:')) { // Cek bukan data:url
+                musicSourceSelect.value = 'none';
+            } else if (backgroundMusic.src && backgroundMusic.src.startsWith('data:')) { // Musik dari upload file
+                 // Biarkan sebagai 'none' atau tambahkan opsi "Uploaded Music"
+                 musicSourceSelect.value = 'none'; // Untuk saat ini, default ke 'none'
             } else {
                  musicSourceSelect.value = 'none';
             }
@@ -446,15 +436,13 @@ document.addEventListener('DOMContentLoaded', function() {
         customizeWebsiteModal.style.display = 'none';
     });
 
-    // Terapkan Warna Latar Belakang
     applyBackgroundColorBtn.addEventListener('click', function() {
         document.body.style.backgroundColor = backgroundColorInput.value;
-        document.body.style.backgroundImage = 'none'; // Hapus gambar latar jika ada
+        document.body.style.backgroundImage = 'none';
         saveSettings();
         alert('Warna latar belakang berhasil diterapkan!');
     });
 
-    // Terapkan Gambar Latar Belakang
     applyBackgroundImageBtn.addEventListener('click', function() {
         const file = backgroundImageInput.files[0];
         if (file) {
@@ -463,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.style.backgroundImage = `url(${event.target.result})`;
                 document.body.style.backgroundSize = 'cover';
                 document.body.style.backgroundAttachment = 'fixed';
-                document.body.style.backgroundColor = ''; // Hapus warna solid jika ada
+                document.body.style.backgroundColor = '';
                 saveSettings();
                 alert('Gambar latar belakang berhasil diterapkan!');
             };
@@ -473,15 +461,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Reset Latar Belakang
     resetBackgroundBtn.addEventListener('click', function() {
-        document.body.style.backgroundColor = ''; // Reset ke default CSS
-        document.body.style.backgroundImage = 'none'; // Hapus gambar
+        document.body.style.backgroundColor = '';
+        document.body.style.backgroundImage = 'none';
         saveSettings();
         alert('Latar belakang telah direset!');
     });
 
-    // Terapkan Perubahan Musik
     applyMusicChangesBtn.addEventListener('click', function() {
         const selectedMusic = musicSourceSelect.value;
         const uploadedFile = uploadMusicFileInput.files[0];
@@ -493,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     backgroundMusic.src = event.target.result;
                     backgroundMusic.load();
                     backgroundMusic.play();
-                    backgroundMusic.muted = false; // Asumsi jika upload, user ingin mendengarkan
+                    backgroundMusic.muted = false;
                     saveSettings();
                     alert('Musik baru dari file Anda berhasil diterapkan!');
                 }
@@ -504,14 +490,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 backgroundMusic.src = selectedMusic;
                 backgroundMusic.load();
                 backgroundMusic.play();
-                backgroundMusic.muted = false; // Asumsi jika dipilih, user ingin mendengarkan
+                backgroundMusic.muted = false;
                 saveSettings();
                 alert('Musik berhasil diubah!');
             }
-        } else { // 'none' dipilih
+        } else {
             if (backgroundMusic) {
                 backgroundMusic.pause();
-                backgroundMusic.src = ''; // Hapus sumber musik
+                backgroundMusic.src = '';
                 saveSettings();
                 alert('Musik latar dimatikan.');
             }
@@ -522,17 +508,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (backgroundMusic) {
             backgroundMusic.muted = !backgroundMusic.muted;
             if (!backgroundMusic.paused && !backgroundMusic.muted) {
-                backgroundMusic.play(); // Pastikan play jika di-unmute
-            } else if (!backgroundMusic.muted) { // Jika unmuted dan paused
+                backgroundMusic.play();
+            } else if (!backgroundMusic.muted) {
                  backgroundMusic.play();
             }
             alert(`Musik sekarang ${backgroundMusic.muted ? 'di-mute' : 'aktif'}.`);
         }
     });
 
-    // Helper function to convert RGB to Hex for color picker display
     function rgbToHex(rgb) {
-        if (!rgb || rgb.startsWith('url')) return ''; // No RGB or is an image
+        if (!rgb || rgb.startsWith('url')) return '';
         const rgbMatch = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
         if (!rgbMatch) return '';
         const hex = num => ('0' + parseInt(num).toString(16)).slice(-2);
@@ -558,4 +543,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-      
