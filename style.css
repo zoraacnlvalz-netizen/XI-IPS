@@ -745,4 +745,41 @@ footer i {
 }
 
 /* ... (sisa kode CSS lainnya) ... */
+/* ... (kode CSS sebelumnya) ... */
+
+/* Gaya untuk Modal Edit Jadwal */
+#editScheduleModal .modal-content {
+    max-width: 650px;
+}
+
+#scheduleEditForm textarea {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+    resize: vertical;
+    min-height: 150px;
+}
+
+#scheduleEditForm select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    background-color: var(--white);
+    cursor: pointer;
+}
+
+#scheduleEditForm select:focus,
+#scheduleEditForm textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    outline: none;
+}
+
+/* ... (sisa kode CSS lainnya) ... */
+
 
