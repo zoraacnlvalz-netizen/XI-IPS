@@ -31,7 +31,6 @@
                             <label for="userTypeTeacher">Wali Kelas</label>
                             <input type="radio" id="userTypeAdmin" name="userType" value="admin">
                             <label for="userTypeAdmin">Peluncur Website</label>
-                             <!-- Tipe user baru: Pengunjung/Non-anggota -->
                             <input type="radio" id="userTypeGuest" name="userType" value="guest">
                             <label for="userTypeGuest">Pengunjung</label>
                         </div>
@@ -99,27 +98,23 @@
                     <i class="fas fa-plus-circle"></i> Buat Pengumuman Baru
                 </button>
                 <div class="card-list" id="announcementsList">
-                    <div class="card">
+                    <!-- Pengumuman akan dimuat di sini oleh JavaScript -->
+                    <!-- Placeholder untuk memastikan ada sesuatu jika localstorage kosong -->
+                    <div class="card placeholder-item">
                         <h4>Rapat Studi Tour</h4>
                         <p>Akan diadakan rapat persiapan studi tour pada hari Jumat, 25 Oktober 2025 di ruang kelas.</p>
                         <span><i class="far fa-calendar-alt"></i> 21 Oktober 2025</span>
                     </div>
-                    <div class="card">
+                    <div class="card placeholder-item">
                         <h4>Jadwal Ujian Ganjil</h4>
                         <p>Jadwal lengkap ujian semester ganjil dapat diunduh di bagian Dokumen Kelas.</p>
                         <span><i class="far fa-calendar-alt"></i> 20 Oktober 2025</span>
-                    </div>
-                    <div class="card">
-                        <h4>Lomba Kebersihan Kelas</h4>
-                        <p>Mari sukseskan lomba kebersihan antar kelas! Penilaian dimulai minggu depan.</p>
-                        <span><i class="far fa-calendar-alt"></i> 18 Oktober 2025</span>
                     </div>
                 </div>
             </section>
 
             <section id="scheduleSection">
                 <h3><i class="fas fa-calendar-alt"></i> Jadwal Mata Pelajaran</h3>
-                <!-- Tombol Edit Jadwal, hanya untuk Peluncur Website -->
                 <button id="editScheduleBtn" class="btn-primary" style="display: none; margin-bottom: 20px;">
                     <i class="fas fa-edit"></i> Edit Jadwal
                 </button>
@@ -133,17 +128,22 @@
                 <button id="uploadPhotoBtn" class="btn-primary" style="display: none; margin-bottom: 20px;">
                     <i class="fas fa-upload"></i> Upload Foto
                 </button>
+                <!-- Tombol untuk menambah kategori galeri baru (BARU) -->
+                <button id="addGalleryCategoryBtn" class="btn-primary" style="display: none; margin-bottom: 20px; margin-left: 10px;">
+                    <i class="fas fa-folder-plus"></i> Tambah Kategori Galeri
+                </button>
+                
+                <!-- Filter Kategori Galeri (BARU) -->
+                <div class="gallery-filters" style="margin-bottom: 20px;">
+                    <label for="galleryCategoryFilter">Filter Kategori:</label>
+                    <select id="galleryCategoryFilter">
+                        <option value="all">Semua Kategori</option>
+                        <!-- Kategori akan dimuat di sini oleh JavaScript -->
+                    </select>
+                </div>
+
                 <div class="gallery-grid" id="galleryGrid">
                     <!-- Foto-foto galeri akan dimuat di sini oleh JavaScript -->
-                    <!-- Placeholder untuk memastikan ada sesuatu jika localstorage kosong -->
-                    <div class="gallery-item placeholder-item">
-                        <img src="https://via.placeholder.com/300x200/FFC107/FFFFFF?text=Momen+Kelas+1" alt="Momen Kelas 1">
-                        <p>Momen kebersamaan saat belajar.</p>
-                    </div>
-                    <div class="gallery-item placeholder-item">
-                        <img src="https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=Momen+Kelas+2" alt="Momen Kelas 2">
-                        <p>Kegiatan bakti sosial.</p>
-                    </div>
                 </div>
             </section>
 
@@ -180,9 +180,6 @@
         </footer>
     </div>
 
-    <!-- Modals (Pengumuman, Upload Foto, Buat Akun Siswa/Wali, Log Akses, Ubah Tampilan) -->
-    <!-- (Ini adalah modal-modal yang sudah ada, saya tidak menyertakan kode lengkapnya di sini untuk menjaga keringkasan. Pastikan Anda menyalinnya dari kode sebelumnya) -->
-
     <!-- Modal untuk Membuat Pengumuman Baru -->
     <div class="modal" id="announcementModal">
         <div class="modal-content">
@@ -202,11 +199,39 @@
         </div>
     </div>
 
+    <!-- Modal untuk Edit Pengumuman (BARU) -->
+    <div class="modal" id="editAnnouncementModal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2><i class="fas fa-edit"></i> Edit Pengumuman</h2>
+            <form id="editAnnouncementForm">
+                <input type="hidden" id="editAnnouncementIndex">
+                <div class="input-group">
+                    <label for="editAnnouncementTitle">Judul Pengumuman</label>
+                    <input type="text" id="editAnnouncementTitle" required>
+                </div>
+                <div class="input-group">
+                    <label for="editAnnouncementContent">Isi Pengumuman</label>
+                    <textarea id="editAnnouncementContent" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Modal untuk Upload Foto Baru (Disesuaikan dengan Kategori) -->
     <div class="modal" id="uploadPhotoModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2><i class="fas fa-camera-retro"></i> Upload Foto Baru</h2>
             <form id="newPhotoUploadForm">
+                <div class="input-group">
+                    <label for="photoCategory">Pilih Kategori Galeri</label>
+                    <select id="photoCategory" required>
+                        <!-- Kategori akan dimuat oleh JavaScript -->
+                    </select>
+                </div>
                 <div class="input-group">
                     <label for="photoFile">Pilih File Foto</label>
                     <input type="file" id="photoFile" accept="image/*" required>
@@ -216,6 +241,21 @@
                     <input type="text" id="photoCaption" placeholder="Mis: Momen Study Tour" required>
                 </div>
                 <button type="submit" class="btn-primary">Upload Foto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal untuk Menambah Kategori Galeri Baru (BARU) -->
+    <div class="modal" id="addGalleryCategoryModal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2><i class="fas fa-folder-plus"></i> Tambah Kategori Galeri Baru</h2>
+            <form id="newGalleryCategoryForm">
+                <div class="input-group">
+                    <label for="newCategoryName">Nama Kategori</label>
+                    <input type="text" id="newCategoryName" placeholder="Contoh: Field Trip Candi" required>
+                </div>
+                <button type="submit" class="btn-primary">Tambah Kategori</button>
             </form>
         </div>
     </div>
@@ -311,7 +351,6 @@
         </div>
     </div>
 
-    <!-- Modal untuk Mengedit Jadwal (BARU) -->
     <div class="modal" id="editScheduleModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
@@ -341,3 +380,4 @@
 </body>
 </html>
 
+                            
